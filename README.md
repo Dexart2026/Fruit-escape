@@ -9,7 +9,7 @@ No jogo, o jogador precisa desviar de obstáculos, usar plataformas, coletar moe
 ## 🎮 Demonstração
 
 > Coloque aqui o link do jogo publicado  
-> Exemplo: `https://seuusuario.github.io/fruit-escape/`
+> Exemplo: `https://dexart2026.github.io/Fruit-escape/`
 
 ---
 
