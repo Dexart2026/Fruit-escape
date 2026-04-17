@@ -1,0 +1,871 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+:root {
+    --game-width: 480px;
+    --game-height: 640px;
+    --ground-height: 100px;
+    --player-size: 46px;
+    --player-left: 70px;
+    --obstacle-width: 56px;
+    --obstacle-box-size: 56px;
+    --platform-width: 110px;
+    --platform-height: 22px;
+    --obstacle-bottom: 85px;
+    --hud-gap: 8px;
+}
+
+body {
+    background: linear-gradient(180deg, #0d1117, #111827);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.game-container {
+    position: relative;
+    width: min(100%, var(--game-width));
+    height: min(92vh, var(--game-height));
+    min-height: 580px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 24px rgba(255, 255, 255, 0.1);
+    background: #0f172a;
+    isolation: isolate;
+}
+
+.start-actions {
+    width: min(260px, 85vw);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+}
+
+.start-actions .skin-selector {
+    width: 100%;
+}
+
+.start-actions .skin-selector-btn,
+.start-actions #startBtn {
+    width: 100%;
+}
+
+/* PARALLAX */
+.parallax {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.layer {
+    position: absolute;
+    inset: 0;
+}
+
+.sky {
+    z-index: 1;
+    background: url("./imagens/Infinite1.png") center center / cover no-repeat;
+}
+
+.layer-wrap {
+    position: absolute;
+    left: 0;
+    width: 200%;
+    display: flex;
+    will-change: transform;
+}
+
+.layer-wrap .layer {
+    position: relative;
+    inset: auto;
+    width: 50%;
+    height: 100%;
+    flex-shrink: 0;
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+}
+
+.clouds-wrap {
+    top: 250px;
+    height: 45%;
+    z-index: 2;
+    animation: scrollClouds 42s linear infinite;
+}
+
+.clouds {
+    background-image: url("./imagens/Infinite2.png");
+    background-position: left top;
+}
+
+.field-wrap {
+    bottom: 110px;
+    height: 22%;
+    z-index: 3;
+    animation: scrollField 22s linear infinite;
+}
+
+.field {
+    background-image: url("./imagens/Infinite3.png");
+    background-position: left bottom;
+}
+
+.front-wrap {
+    bottom: 85px;
+    height: 32%;
+    z-index: 4;
+    animation: scrollFront 12s linear infinite;
+}
+
+.front {
+    background-image: url("./imagens/Infinite4.png");
+    background-position: left bottom;
+}
+
+.game-container.is-paused .clouds-wrap,
+.game-container.is-paused .field-wrap,
+.game-container.is-paused .front-wrap,
+.game-container.is-paused .ground {
+    animation-play-state: paused;
+}
+
+@keyframes scrollClouds {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes scrollField {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes scrollFront {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* HUD */
+.hud {
+    position: absolute;
+    top: 18px;
+    left: 14px;
+    right: 190px;
+    display: flex;
+    gap: var(--hud-gap);
+    z-index: 20;
+    flex-wrap: wrap;
+}
+
+.hud-box {
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+}
+
+/* BOTÕES SUPERIORES */
+.pause-btn,
+.shop-btn {
+    position: absolute;
+    top: 18px;
+    z-index: 40;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: bold;
+    cursor: pointer;
+    min-width: 92px;
+}
+
+.pause-btn {
+    right: 14px;
+    background: #ffcc00;
+    color: #111111;
+}
+
+.shop-btn {
+    right: 118px;
+    background: #22c55e;
+    color: #fff;
+}
+
+.pause-screen {
+    pointer-events: none;
+}
+
+/* SELETOR DE SKINS */
+.skin-selector {
+    position: relative;
+    width: min(240px, 90%);
+}
+
+.skin-selector-btn {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+    background: #fff;
+    color: #111;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.skin-selector-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 100;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.skin-option {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: left;
+}
+
+.skin-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.skin-selector-icon,
+.skin-option-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    flex-shrink: 0;
+}
+
+/* PLAYER */
+.player {
+    --player-rotation: 0deg;
+    position: absolute;
+    left: var(--player-left);
+    bottom: var(--ground-height);
+    width: var(--player-size);
+    height: var(--player-size);
+    border-radius: 10px;
+    z-index: 12;
+    animation: playerIdle 0.8s ease-in-out infinite;
+    transform: rotate(var(--player-rotation));
+    will-change: transform, bottom;
+}
+
+.player::after {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: 6px;
+    background: transparent;
+}
+
+.skin-pessego {
+    background: url("./imagens/Fruta1.png") center / cover no-repeat;
+}
+
+.skin-pessego::after,
+.skin-maca::after,
+.skin-manga::after {
+    display: none;
+}
+
+.skin-maca {
+    background: url("./imagens/Fruta2.png") center / cover no-repeat;
+}
+
+.skin-manga {
+    background: url("./imagens/Fruta 3.png") center / cover no-repeat;
+}
+
+.skin-pytaia {
+  background: url("./imagens/Fruta4.png") center / cover no-repeat;
+}
+
+.skin-pytaia::after {
+  display: none;
+}
+
+@keyframes playerIdle {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(var(--player-rotation));
+    }
+
+    50% {
+        transform: translateY(-4px) rotate(var(--player-rotation));
+    }
+}
+
+/* RASTRO DO PLAYER */
+.player-trail {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 11;
+    overflow: visible;
+}
+
+.trail-preview {
+    width: 64px;
+    height: 14px;
+    border-radius: 999px;
+    background: linear-gradient(90deg,
+            red,
+            orange,
+            yellow,
+            limegreen,
+            deepskyblue,
+            blue,
+            violet);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+.trail-segment {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: linear-gradient(90deg,
+            red,
+            orange,
+            yellow,
+            limegreen,
+            deepskyblue,
+            blue,
+            violet);
+    opacity: 0.9;
+    transform-origin: center;
+    filter: blur(1px);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes rainbowTrailPulse {
+    0% {
+        transform: scaleX(1) scaleY(1);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: scaleX(0.92) scaleY(1.08);
+        opacity: 0.65;
+    }
+
+    100% {
+        transform: scaleX(1) scaleY(1);
+        opacity: 0.9;
+    }
+}
+
+/* PLATAFORMAS */
+.platform {
+    position: absolute;
+    width: var(--platform-width);
+    height: var(--platform-height);
+    border-radius: 5px;
+    background: url("./imagens/Tijolos.avif") center / 100% 100% no-repeat;
+    z-index: 10;
+}
+
+
+/* OBSTÁCULOS */
+.obstacle {
+    position: absolute;
+    bottom: var(--obstacle-bottom);
+    width: var(--obstacle-width);
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 0;
+    z-index: 11;
+}
+
+.obstacle-box {
+    display: block;
+    width: var(--obstacle-box-size);
+    height: var(--obstacle-box-size);
+    margin: 0;
+    padding: 0;
+    background: url("./imagens/caixote-pixel.png") center center / 100% 100% no-repeat;
+    flex-shrink: 0;
+    line-height: 0;
+}
+
+.obstacle-box+.obstacle-box {
+    margin-bottom: -24px;
+}
+
+/* ITENS */
+.coin {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: url("./imagens/moeda.png") center / contain no-repeat;
+    z-index: 13;
+    animation: spinCoin 0.8s linear infinite;
+    will-change: transform, left;
+}
+
+@keyframes spinCoin {
+    0% {
+        transform: scaleX(1);
+    }
+
+    50% {
+        transform: scaleX(0.35);
+    }
+
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+.special-item {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    background: url("./imagens/patinho.png") center / contain no-repeat;
+    z-index: 14;
+    animation: specialFloat 1s ease-in-out infinite;
+    will-change: transform, left;
+}
+
+@keyframes specialFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+/* CHÃO */
+.ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: var(--ground-height);
+    background-image: url("./imagens/chão.jpg");
+    background-repeat: repeat-x;
+    background-position: 0 bottom;
+    background-size: auto 100%;
+    z-index: 5;
+    animation: scrollGround 6s linear infinite;
+}
+
+@keyframes scrollGround {
+    from {
+        background-position: 0 bottom;
+    }
+
+    to {
+        background-position: -300px bottom;
+    }
+}
+
+/* TELAS */
+.screen {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    background: rgba(5, 10, 20, 0.82);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 28px;
+    text-align: center;
+    gap: 14px;
+}
+
+.screen h1,
+.screen h2 {
+    font-size: clamp(2rem, 4vw, 2.4rem);
+}
+
+.screen p {
+    max-width: 320px;
+    line-height: 1.5;
+    font-size: clamp(1rem, 2.4vw, 1.15rem);
+}
+
+.screen button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 1rem;
+    background: #00d8ff;
+    color: #111;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+.hint {
+    position: absolute;
+    bottom: 18px;
+    width: 100%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.92rem;
+    z-index: 12;
+    pointer-events: none;
+    padding: 0 12px;
+}
+
+/* LOJA */
+.shop-screen {
+    z-index: 45;
+    justify-content: flex-start;
+    padding: 24px 18px 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.shop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: min(360px, 100%);
+    margin: 8px auto 0;
+}
+
+.shop-item {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.shop-item h3 {
+    font-size: 1rem;
+}
+
+.shop-item p {
+    font-size: 0.95rem;
+}
+
+.shop-skin-img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    margin: 0 auto 6px;
+    display: block;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 6px;
+}
+
+.shop-item.locked .shop-skin-img {
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
+
+.shop-item.unlocked .shop-skin-img {
+    opacity: 1;
+    filter: none;
+}
+
+.shop-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: min(360px, 100%);
+    margin: 12px auto 0;
+}
+
+.shop-actions button {
+    min-width: 150px;
+}
+
+.shop-screen h2 {
+    margin-top: 4px;
+}
+
+.shop-screen>p {
+    margin-bottom: 8px;
+}
+
+.shop-screen::-webkit-scrollbar {
+    width: 8px;
+}
+
+.shop-screen::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.shop-screen::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --game-height: 100vh;
+        --platform-width: 100px;
+        --platform-height: 20px;
+    }
+
+    body {
+        padding: 0;
+    }
+
+    .game-container {
+        width: 100%;
+        height: 100vh;
+        min-height: 100vh;
+        border-radius: 0;
+        border: none;
+    }
+
+    .hud {
+        top: 12px;
+        left: 10px;
+        right: 10px;
+        gap: 6px;
+    }
+
+    .hud-box {
+        font-size: 0.85rem;
+        padding: 7px 10px;
+    }
+
+    .pause-btn {
+        top: auto;
+        bottom: 72px;
+        right: 12px;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        min-width: 96px;
+    }
+
+    .shop-btn {
+        top: auto;
+        bottom: 120px;
+        right: 12px;
+        min-width: 96px;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .screen {
+        padding: 24px 18px;
+    }
+
+    .start-screen button,
+    .game-over-screen button {
+        width: min(260px, 85vw);
+    }
+
+    .hint {
+        bottom: 16px;
+        font-size: 0.82rem;
+    }
+
+    .shop-screen {
+        padding: 20px 14px 18px;
+    }
+
+    .shop-list,
+    .shop-actions {
+        width: min(320px, 100%);
+    }
+
+    .shop-skin-img {
+        width: 64px;
+        height: 64px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --player-size: 42px;
+        --player-left: 42px;
+        --obstacle-width: 48px;
+        --obstacle-box-size: 48px;
+        --ground-height: 92px;
+        --obstacle-bottom: 80px;
+        --platform-width: 92px;
+        --platform-height: 18px;
+    }
+
+    .clouds-wrap {
+        height: 40%;
+    }
+
+    .field-wrap {
+        bottom: 64px;
+        height: 18%;
+    }
+
+    .front-wrap {
+        height: 28%;
+    }
+
+    .hud {
+        top: 10px;
+        left: 8px;
+        right: 8px;
+        gap: 6px;
+    }
+
+    .hud-box {
+        font-size: 0.78rem;
+        padding: 6px 8px;
+        border-radius: 10px;
+    }
+
+    .pause-btn {
+        bottom: 66px;
+        right: 8px;
+        padding: 9px 10px;
+        min-width: 88px;
+        font-size: 0.82rem;
+    }
+
+    .shop-btn {
+        bottom: 114px;
+        right: 8px;
+        min-width: 88px;
+        font-size: 0.82rem;
+        padding: 9px 10px;
+    }
+
+    .skin-selector {
+        width: min(220px, 100%);
+    }
+
+    .player {
+        border-radius: 8px;
+    }
+
+    .obstacle-box+.obstacle-box {
+        margin-bottom: -20px;
+    }
+
+    .coin {
+        width: 34px;
+        height: 34px;
+    }
+
+    .screen {
+        gap: 12px;
+    }
+
+    .screen p {
+        max-width: 280px;
+    }
+
+    .hint {
+        font-size: 0.76rem;
+        bottom: 12px;
+    }
+
+    .shop-screen {
+        padding: 18px 12px 16px;
+    }
+
+    .shop-item {
+        padding: 14px 12px;
+    }
+
+    .shop-item h3 {
+        font-size: 0.95rem;
+    }
+
+    .shop-item p {
+        font-size: 0.9rem;
+    }
+
+    .shop-actions button {
+        min-width: 132px;
+    }
+}
+
+@media (max-width: 360px) {
+    :root {
+        --player-size: 38px;
+        --player-left: 32px;
+        --obstacle-width: 44px;
+        --obstacle-box-size: 44px;
+        --platform-width: 80px;
+        --platform-height: 16px;
+    }
+
+    .hud-box {
+        font-size: 0.72rem;
+        padding: 5px 7px;
+    }
+
+    .pause-btn,
+    .shop-btn {
+        min-width: 80px;
+        font-size: 0.76rem;
+    }
+
+    .screen h1,
+    .screen h2 {
+        font-size: 1.7rem;
+    }
+
+    .obstacle-box+.obstacle-box {
+        margin-bottom: -18px;
+    }
+}

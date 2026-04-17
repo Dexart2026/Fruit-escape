@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Fruit Escape</title>
+    <link rel="stylesheet" href="style-game.css" />
+</head>
+
+<body>
+    <div class="game-container" id="game">
+        <div class="screen shop-screen hidden" id="shopScreen">
+            <h2>Loja</h2>
+            <p>Moedas guardadas: <span id="savedCoins">0</span></p>
+
+            <div class="shop-list">
+                <div class="shop-item" id="shopPytaia">
+                    <img src="./imagens/Fruta4.png" alt="Skin pytaia" class="shop-skin-img" />
+                    <h3>Skin pytaia</h3>
+                    <p>Custo: 500 moedas</p>
+                    <button type="button" id="buyPytaiaBtn">Comprar</button>
+                </div>
+
+
+                <div class="shop-item" id="shopMaca">
+                    <img src="./imagens/Fruta2.png" alt="Skin Maçã dourada" class="shop-skin-img" />
+                    <h3>Skin Maçã dourada</h3>
+                    <p>Custo: 75 moedas</p>
+                    <button type="button" id="buyMacaBtn">Comprar</button>
+                </div>
+
+                <div class="shop-item" id="shopPessego">
+                    <img src="./imagens/Fruta1.png" alt="Skin Pêssego" class="shop-skin-img" />
+                    <h3>Skin Pêssego</h3>
+                    <p>Custo: 0 moedas</p>
+                    <button type="button" id="buyPessegoBtn">Desbloqueada</button>
+                </div>
+
+                <div class="shop-item" id="shopManga">
+                    <img src="./imagens/Fruta 3.png" alt="Skin Manga" class="shop-skin-img" />
+                    <h3>Skin Manga</h3>
+                    <p>Custo: 50 moedas</p>
+                    <button type="button" id="buyMangaBtn">Comprar</button>
+                </div>
+
+                <div class="shop-item" id="shopRainbowTrail">
+                    <div class="trail-preview"></div>
+                    <h3>Rastro arco-íris</h3>
+                    <p>Custo: 300 moedas</p>
+                    <button type="button" id="buyRainbowTrailBtn">Comprar</button>
+                </div>
+
+                <div class="shop-item" id="shopJump">
+                    <h3>Melhoria de pulo</h3>
+                    <p>Custo: 150 moedas</p>
+                    <button type="button" id="buyJumpBtn">Comprar</button>
+                </div>
+            </div>
+
+            <div class="shop-actions">
+                <button type="button" id="closeShopBtn">Fechar</button>
+                <button type="button" id="resetProgressBtn">Resetar progresso</button>
+            </div>
+        </div>
+
+        <div class="parallax" aria-hidden="true">
+            <div class="layer sky"></div>
+
+            <div class="layer-wrap clouds-wrap">
+                <div class="layer clouds"></div>
+                <div class="layer clouds"></div>
+            </div>
+
+            <div class="layer-wrap field-wrap">
+                <div class="layer field"></div>
+                <div class="layer field"></div>
+            </div>
+
+            <div class="layer-wrap front-wrap">
+                <div class="layer front"></div>
+                <div class="layer front"></div>
+            </div>
+        </div>
+
+        <div class="hud">
+            <div class="hud-box">⭐ Pontos: <span id="score">0</span></div>
+            <div class="hud-box">🪙 Moedas: <span id="coins">0</span></div>
+            <div class="hud-box">💎 Especiais: <span id="specialCount">0</span></div>
+            <div class="hud-box">🏆 Recorde: <span id="highScore">0</span></div>
+        </div>
+
+        <button class="pause-btn" id="pauseBtn" type="button">Pausar</button>
+        <button class="shop-btn" id="shopBtn" type="button">Loja</button>
+
+        <div class="player-trail hidden" id="playerTrail"></div>
+        <div class="player skin-pessego" id="player"></div>
+        <div class="ground"></div>
+
+        <div class="screen start-screen" id="startScreen">
+            <h1>🍓 Fruit Escape 🍇</h1>
+            <p>Desvie dos obstáculos, colete moedas e sobreviva o máximo possível.</p>
+
+            <label for="skinSelectorBtn">Escolha sua skin:</label>
+
+            <div class="start-actions">
+                <div class="skin-selector" id="skinSelector">
+                    <button type="button" class="skin-selector-btn" id="skinSelectorBtn" aria-expanded="false">
+                        <img src="./imagens/Fruta1.png" alt="Pêssego" class="skin-selector-icon" id="selectedSkinImg" />
+                        <span id="selectedSkinText">Pêssego</span>
+                    </button>
+
+                    <div class="skin-selector-options hidden" id="skinSelectorOptions">
+                        <button type="button" class="skin-option" data-value="skin-pessego" data-label="Pêssego"
+                            data-img="./imagens/Fruta1.png">
+                            <img src="./imagens/Fruta1.png" alt="Pêssego" class="skin-option-icon" />
+                            <span>Pêssego</span>
+                        </button>
+
+                        <button type="button" class="skin-option" data-value="skin-maca" data-label="Maçã dourada"
+                            data-img="./imagens/Fruta2.png">
+                            <img src="./imagens/Fruta2.png" alt="Maçã dourada" class="skin-option-icon" />
+                            <span>Maçã dourada</span>
+                        </button>
+
+                        <button type="button" class="skin-option" data-value="skin-manga" data-label="Manga"
+                            data-img="./imagens/Fruta 3.png">
+                            <img src="./imagens/Fruta 3.png" alt="Manga" class="skin-option-icon" />
+                            <span>Manga</span>
+                        </button>
+
+                        <button type="button" class="skin-option" data-value="skin-pytaia" data-label="Pitaya"
+                            data-img="./imagens/Fruta4.png">
+                            <img src="./imagens/Fruta4.png" alt="Pitaya" class="skin-option-icon" />
+                            <span>Pitaya</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button id="startBtn" type="button">Começar</button>
+            </div>
+        </div>
+
+        <div class="screen pause-screen hidden" id="pauseScreen">
+            <h2>Jogo pausado</h2>
+            <p>Pressione o botão para continuar.</p>
+        </div>
+
+        <div class="screen game-over-screen hidden" id="gameOverScreen">
+            <h2>Game Over</h2>
+            <p>Sua pontuação: <span id="finalScore">0</span></p>
+            <p>Moedas coletadas: <span id="finalCoins">0</span></p>
+            <button id="restartBtn" type="button">Jogar novamente</button>
+        </div>
+
+        <div class="hint">Toque na tela ou pressione espaço para pular</div>
+    </div>
+
+    <script src="script-game.js"></script>
+</body>
+
+</html>
